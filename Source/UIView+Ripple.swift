@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIView {
-    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, rippleCount: Int = 3, rippleDistance: CGFloat? = nil) {
+    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, repeatCount: Int = 1, rippleCount: Int = 3, rippleDistance: CGFloat? = nil) {
         let rippleAnimationAvatarSize = self.frame.size
         let rippleAnimationLineWidth: CGFloat = 1.0
         let rippleAnimationDuration: Double = duration
@@ -49,6 +49,7 @@ extension UIView {
         self.layer.addSublayer(replicator)
 
         let shape = animationLayer(path: initPath, color: color)
+        shape.name = "ShapeForRipple"
         shape.frame = CGRect(x: 0, y: 0, width: rippleAnimationAvatarSize.width, height: rippleAnimationAvatarSize.height)
         replicator.addSublayer(shape)
 
@@ -63,9 +64,9 @@ extension UIView {
         let groupAnimation = CAAnimationGroup()
         groupAnimation.animations = [pathAnimation, opacityAnimation]
         groupAnimation.duration = rippleAnimationDuration
-        groupAnimation.repeatCount = Float(Int.max)
-
-        shape.add(groupAnimation, forKey: nil)
+        groupAnimation.repeatCount = Float(repeatCount)
+        groupAnimation.isRemovedOnCompletion = true
+        shape.add(groupAnimation, forKey: "RippleGroupAnimation")
     }
     
     open func removeRippleAnimation() {
@@ -75,17 +76,7 @@ extension UIView {
             }
         })
     }
-    
-    open var isRippleAnimating: Bool {
-        var animating = false
-        layer.sublayers?.forEach({ (layer) in
-            if let replicator = layer as? CAReplicatorLayer, replicator.name == "ReplicatorForRipple" {
-                animating = true
-            }
-        })
-        return animating
-    }
-    
+
     private func animationLayer(path: UIBezierPath, color: UIColor) -> CAShapeLayer {
         let shape = CAShapeLayer()
         shape.path = path.cgPath

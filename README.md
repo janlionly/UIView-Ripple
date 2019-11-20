@@ -24,12 +24,7 @@ pod 'UIView-Ripple'
 ```swift
 let testView = UIView(frame: CGRect(x: 100, y: 100, width: 80, height: 80)
 testView.layer.cornerRadius = view.frame.size.width/2.0
-
-if testView.isRippleAnimating {
-    testView.removeRippleAnimation()
-} else {
-    testView.addRippleAnimation(color: .systemPink, duration: 1.5, rippleCount: 3, rippleDistance: nil)
-} 
+testView.addRippleAnimation(color: .systemPink, duration: 1.5, repeatCount:1, rippleCount: 3, rippleDistance: nil)
 ```
 
 ## Requirements

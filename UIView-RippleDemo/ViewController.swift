@@ -18,11 +18,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func normalViewTapped(_ sender: Any) {
-        if normalView.isRippleAnimating {
-            normalView.removeRippleAnimation()
-        } else {
-            normalView.addRippleAnimation(color: .systemPink)
-        }
+        normalView.addRippleAnimation(color: .systemPink)
     }
 }
 
