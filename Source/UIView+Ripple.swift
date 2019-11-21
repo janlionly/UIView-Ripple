@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIView {
-    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, repeatCount: Int = 1, rippleCount: Int = 3, rippleDistance: CGFloat? = nil) {
+    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, repeatCount: Int = 1, rippleCount: Int = 3, rippleDistance: CGFloat? = nil, expandMaxRatio ratio: CGFloat = 1, startReset: Bool = true) {
         let rippleAnimationAvatarSize = self.frame.size
         let rippleAnimationLineWidth: CGFloat = 1.0
         let rippleAnimationDuration: Double = duration
@@ -23,22 +23,11 @@ extension UIView {
         
         let initPath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: rippleAnimationAvatarSize.width, height: rippleAnimationAvatarSize.height).insetBy(dx: rippleAnimationLineWidth, dy: rippleAnimationLineWidth))
         
-        let finalPath = UIBezierPath(ovalIn: CGRect(x: -rippleAnimationExpandSizeValue, y: -rippleAnimationExpandSizeValue, width: rippleAnimationAvatarSize.width + rippleAnimationExpandSizeValue * 2, height: rippleAnimationAvatarSize.height + rippleAnimationExpandSizeValue * 2).insetBy(dx: rippleAnimationLineWidth, dy: rippleAnimationLineWidth))
+        let finalPath = UIBezierPath(ovalIn: CGRect(x: -rippleAnimationExpandSizeValue * ratio, y: -rippleAnimationExpandSizeValue * ratio, width: rippleAnimationAvatarSize.width + rippleAnimationExpandSizeValue * 2 * ratio, height: rippleAnimationAvatarSize.height + rippleAnimationExpandSizeValue * 2 * ratio).insetBy(dx: rippleAnimationLineWidth, dy: rippleAnimationLineWidth))
         clipsToBounds = false
         
-        var layers: [CALayer] = []
-        if let count = self.layer.sublayers?.count {
-            for i in 0..<count {
-                if let lyrs = self.layer.sublayers, let layer = lyrs[i] as? CAReplicatorLayer {
-                    layers.append(layer)
-                    layer.isHidden = true
-                }
-            }
-        }
-        
-        let count = layers.count
-        for i in 0..<count {
-            layers[i].removeFromSuperlayer()
+        if startReset {
+            removeRippleAnimation()
         }
         
         let replicator = CAReplicatorLayer()
@@ -54,6 +43,7 @@ extension UIView {
         replicator.addSublayer(shape)
 
         let pathAnimation = CABasicAnimation(keyPath: "path")
+        pathAnimation.isRemovedOnCompletion = true
         pathAnimation.fromValue = initPath.cgPath
         pathAnimation.toValue = finalPath.cgPath
 
@@ -70,11 +60,23 @@ extension UIView {
     }
     
     open func removeRippleAnimation() {
+        var layers: [CALayer] = []
         layer.sublayers?.forEach({ (layer) in
             if let replicator = layer as? CAReplicatorLayer, replicator.name == "ReplicatorForRipple" {
-                replicator.removeFromSuperlayer()
+                replicator.sublayers?.forEach({ (ly) in
+                    if ly.name == "ShapeForRipple" {
+                        ly.isHidden = true
+                        layers.append(ly)
+                    }
+                })
+                replicator.isHidden = true
+                layers.append(replicator)
             }
         })
+        
+        for i in 0..<layers.count {
+            layers[i].removeFromSuperlayer()
+        }
     }
 
     private func animationLayer(path: UIBezierPath, color: UIColor) -> CAShapeLayer {
