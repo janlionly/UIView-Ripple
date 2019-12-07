@@ -8,17 +8,26 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CAAnimationDelegate {
 
     @IBOutlet weak var normalView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        normalView.addRippleAnimation(color: .systemPink, duration: 1.5, rippleCount: 3, rippleDistance: nil)
+        normalView.addRippleAnimation(color: .systemPink, duration: 1.5, rippleCount: 3, rippleDistance: nil, startReset: false, handler: { animation in
+            animation.delegate = self
+        })
     }
 
     @IBAction func normalViewTapped(_ sender: Any) {
-        normalView.addRippleAnimation(color: .systemPink)
+        normalView.addRippleAnimation(color: .systemPink, startReset: false, handler: { animation in
+            animation.delegate = self
+        })
+    }
+    
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        print("animation stop")
+        normalView.removeRippleAnimation()
     }
 }
 

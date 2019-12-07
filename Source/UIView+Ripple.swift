@@ -9,7 +9,14 @@
 import UIKit
 
 extension UIView {
-    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, repeatCount: Int = 1, rippleCount: Int = 3, rippleDistance: CGFloat? = nil, expandMaxRatio ratio: CGFloat = 1, startReset: Bool = true) {
+    open func addRippleAnimation(color: UIColor, duration: Double = 1.5, repeatCount: Int = 1, rippleCount: Int = 3, rippleDistance: CGFloat? = nil, expandMaxRatio ratio: CGFloat = 1, startReset: Bool = true, handler:((CAAnimation)->Void)? = nil) {
+        if startReset {
+            removeRippleAnimation()
+        } else {
+            if isRippleAnimating {
+                return
+            }
+        }
         let rippleAnimationAvatarSize = self.frame.size
         let rippleAnimationLineWidth: CGFloat = 1.0
         let rippleAnimationDuration: Double = duration
@@ -26,9 +33,7 @@ extension UIView {
         let finalPath = UIBezierPath(ovalIn: CGRect(x: -rippleAnimationExpandSizeValue * ratio, y: -rippleAnimationExpandSizeValue * ratio, width: rippleAnimationAvatarSize.width + rippleAnimationExpandSizeValue * 2 * ratio, height: rippleAnimationAvatarSize.height + rippleAnimationExpandSizeValue * 2 * ratio).insetBy(dx: rippleAnimationLineWidth, dy: rippleAnimationLineWidth))
         clipsToBounds = false
         
-        if startReset {
-            removeRippleAnimation()
-        }
+        
         
         let replicator = CAReplicatorLayer()
         replicator.instanceCount = rippleCount
@@ -52,11 +57,13 @@ extension UIView {
         opacityAnimation.toValue = NSNumber(value: 0)
 
         let groupAnimation = CAAnimationGroup()
+        handler?(groupAnimation)
         groupAnimation.animations = [pathAnimation, opacityAnimation]
         groupAnimation.duration = rippleAnimationDuration
         groupAnimation.repeatCount = Float(repeatCount)
         groupAnimation.isRemovedOnCompletion = true
         shape.add(groupAnimation, forKey: "RippleGroupAnimation")
+        
     }
     
     open func removeRippleAnimation() {
@@ -77,6 +84,7 @@ extension UIView {
         for i in 0..<layers.count {
             layers[i].removeFromSuperlayer()
         }
+        layers.removeAll()
     }
 
     private func animationLayer(path: UIBezierPath, color: UIColor) -> CAShapeLayer {
@@ -86,5 +94,15 @@ extension UIView {
         shape.fillColor = UIColor.clear.cgColor
         shape.lineWidth = 1.0
         return shape
+    }
+    
+    open var isRippleAnimating: Bool {
+        var animating = false
+        layer.sublayers?.forEach({ (layer) in
+            if let replicator = layer as? CAReplicatorLayer, replicator.name == "ReplicatorForRipple" {
+                animating = true
+            }
+        })
+        return animating
     }
 }
