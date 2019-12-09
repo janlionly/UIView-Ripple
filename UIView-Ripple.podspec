@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'UIView-Ripple'
-  s.version          = '1.0.2'
+  s.version          = '1.0.4'
   s.summary          = 'UIView-Ripple is an animation which like water ripple expand.'
  
   s.homepage         = 'https://github.com/janlionly/UIView-Ripple'

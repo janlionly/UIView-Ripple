@@ -14,13 +14,13 @@ class ViewController: UIViewController, CAAnimationDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        normalView.addRippleAnimation(color: .systemPink, duration: 1.5, rippleCount: 3, rippleDistance: nil, startReset: false, handler: { animation in
+        normalView.addRippleAnimation(color: UIColor(red:0.02, green:0.80, blue:0.44, alpha:1.0), duration: 1.5, rippleCount: 3, rippleDistance: nil, startReset: false, handler: { animation in
             animation.delegate = self
         })
     }
 
     @IBAction func normalViewTapped(_ sender: Any) {
-        normalView.addRippleAnimation(color: .systemPink, startReset: false, handler: { animation in
+        normalView.addRippleAnimation(color: UIColor(red:0.02, green:0.80, blue:0.44, alpha:1.0), startReset: false, handler: { animation in
             animation.delegate = self
         })
     }

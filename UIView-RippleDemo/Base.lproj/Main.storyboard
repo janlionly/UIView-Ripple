@@ -35,7 +35,7 @@
                                 </connections>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="L7E-Il-uIU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7FX-n9-Qlu"/>
                             <constraint firstItem="L7E-Il-uIU" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="90" id="T3P-G5-B90"/>
